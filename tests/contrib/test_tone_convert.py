@@ -10,7 +10,7 @@ from pypinyin.contrib.tone_convert import (
     tone3_to_tone,
     tone2_to_normal,
     tone2_to_tone3,
-    tone3_to_tone2,
+    # tone3_to_tone2,
     tone3_to_normal,
     to_normal,
     to_tone,
@@ -25,6 +25,7 @@ from pypinyin.contrib.tone_convert import (
     ['yuè', 'yue'],
     ['er', 'er'],
     ['nǚ', 'nv'],
+    ['nv', 'nv'],
     ['ā', 'a'],
     ['a', 'a'],
 ])
@@ -37,7 +38,9 @@ def test_tone_to_normal(pinyin, result):
 
 @mark.parametrize('pinyin,v_to_u,result', [
     ['nǚ', False, 'nv'],
+    ['nv', False, 'nv'],
     ['nǚ', True, 'nü'],
+    ['nv', True, 'nü'],
 ])
 def test_tone_to_normal_with_v_to_u(pinyin, v_to_u, result):
     assert tone_to_normal(pinyin, v_to_u=v_to_u) == result
@@ -50,6 +53,7 @@ def test_tone_to_normal_with_v_to_u(pinyin, v_to_u, result):
     ['yuè', 'yue4'],
     ['er', 'er'],
     ['nǚ', 'nv3'],
+    ['nv', 'nv'],
     ['ā', 'a1'],
     ['a', 'a'],
     ['shang', 'shang'],
@@ -81,14 +85,17 @@ def test_tone_tone2_with_neutral_tone_with_5(
 
 @mark.parametrize('pinyin,v_to_u,result', [
     ['nǚ', False, 'nv3'],
+    ['nv', False, 'nv'],
     ['nǚ', True, 'nü3'],
+    ['nv', True, 'nü'],
 ])
 def test_tone_tone2_with_v_to_u(pinyin, v_to_u, result):
     assert tone_to_tone2(pinyin, v_to_u=v_to_u) == result
     assert to_tone2(pinyin, v_to_u=v_to_u) == result
 
     assert tone2_to_tone(result) == pinyin
-    assert to_tone(result) == pinyin
+    if 'v' not in pinyin:
+        assert to_tone(result) == pinyin
 
 
 @mark.parametrize('pinyin,result', [
@@ -97,6 +104,7 @@ def test_tone_tone2_with_v_to_u(pinyin, v_to_u, result):
     ['yuè', 'yue4'],
     ['er', 'er'],
     ['nǚ', 'nv3'],
+    ['nv', 'nv'],
     ['ā', 'a1'],
     ['a', 'a'],
     ['shang', 'shang'],
@@ -130,13 +138,15 @@ def test_tone_tone3_with_neutral_tone_with_5(
 @mark.parametrize('pinyin,v_to_u,result', [
     ['nǚ', False, 'nv3'],
     ['nǚ', True, 'nü3'],
+    ['nv', True, 'nü'],
 ])
 def test_tone_tone3_with_v_to_u(pinyin, v_to_u, result):
     assert tone_to_tone3(pinyin, v_to_u=v_to_u) == result
     assert to_tone3(pinyin, v_to_u=v_to_u) == result
 
     assert tone3_to_tone(result) == pinyin
-    assert to_tone(result) == pinyin
+    if 'v' not in pinyin:
+        assert to_tone(result) == pinyin
 
 
 @mark.parametrize('pinyin,result', [
@@ -145,7 +155,7 @@ def test_tone_tone3_with_v_to_u(pinyin, v_to_u, result):
     ['yue4', 'yue4'],
     ['er', 'er'],
     ['nv3', 'nv3'],
-    ['nü3', 'nü3'],
+    ['nü3', 'nv3'],
     ['a1', 'a1'],
     ['a', 'a'],
     ['shang', 'shang'],
@@ -155,9 +165,9 @@ def test_tone2_tone3(pinyin, result):
     assert tone2_to_tone3(pinyin) == result
     assert to_tone3(pinyin) == result
 
-    assert tone3_to_tone2(result) == pinyin
-    assert to_tone2(result) == pinyin
-    assert to_tone2(pinyin) == pinyin
+    # assert tone3_to_tone2(result) == pinyin
+    # assert to_tone2(result) == pinyin
+    # assert to_tone2(pinyin) == pinyin
 
 
 @mark.parametrize('pinyin,result', [
@@ -166,7 +176,7 @@ def test_tone2_tone3(pinyin, result):
     ['yue4', 'yue'],
     ['er', 'er'],
     ['nv3', 'nv'],
-    ['nü3', 'nü'],
+    ['nü3', 'nv'],
     ['a1', 'a'],
     ['a', 'a'],
     ['shang', 'shang'],
@@ -182,14 +192,14 @@ def test_tone2_to_normal(pinyin, result):
 @mark.parametrize('pinyin,v_to_u,result', [
     ['nv3', False, 'nv'],
     ['nv3', True, 'nü'],
-    ['nü3', False, 'nü'],
+    ['nü3', False, 'nv'],
     ['nü3', True, 'nü'],
 ])
 def test_tone2_to_normal_with_v_to_u(pinyin, v_to_u, result):
     assert tone2_to_normal(pinyin, v_to_u=v_to_u) == result
 
     assert to_normal(pinyin, v_to_u=v_to_u) == result
-    assert to_normal(result) == result
+    assert to_normal(result, v_to_u=v_to_u) == result
 
 
 @mark.parametrize('pinyin,result', [
@@ -198,7 +208,7 @@ def test_tone2_to_normal_with_v_to_u(pinyin, v_to_u, result):
     ['yue4', 'yue'],
     ['er', 'er'],
     ['nv3', 'nv'],
-    ['nü3', 'nü'],
+    ['nü3', 'nv'],
     ['a1', 'a'],
     ['a', 'a'],
     ['shang', 'shang'],
@@ -212,7 +222,7 @@ def test_tone3_to_normal(pinyin, result):
 @mark.parametrize('pinyin,v_to_u,result', [
     ['nv3', False, 'nv'],
     ['nv3', True, 'nü'],
-    ['nü3', False, 'nü'],
+    ['nü3', False, 'nv'],
     ['nü3', True, 'nü'],
 ])
 def test_tone3_to_normal_with_v_to_u(pinyin, v_to_u, result):
